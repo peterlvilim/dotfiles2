@@ -169,17 +169,6 @@ nnoremap <C-l> :redraw!<CR>| " force redraw
 :set guioptions-=L  "remove left-hand scroll bar
 
 "python start
-
-au BufNewFile,BufRead *.py
-    \ set tabstop=4
-    \ set softtabstop=4
-    \ set shiftwidth=4
-    \ set textwidth=79
-    \ set expandtab
-    \ set autoindent
-    \ set fileformat=unix
-
-au BufRead,BufNewFile *.py,*.pyw,*.c,*.h match BadWhitespace /\s\+$/
 let g:ycm_server_python_interpreter = '/usr/bin/python2'
 let g:ycm_autoclose_preview_window_after_completion=1
 map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
