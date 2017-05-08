@@ -1,0 +1,54 @@
+alias t="todo.sh"
+alias g="git"
+gcal() {
+gcalcli --pw `pass peterlvilim@gmail.com` "$@"
+}
+alias v="nvim"
+alias c="clear"
+alias s="ncmpcpp"
+alias m="mutt"
+alias k="pkill -9 -f"
+alias p="pass -c"
+alias crontab-e="$EDITOR ~/.crontab && crontab ~/.crontab"
+ago() {
+ag "$@" && /usr/bin/vendor_perl/mimeopen `ag -l --nobreak "$@" | tmenu -l 10 -p `
+}
+alias l="ls -F"
+alias edit='/usr/bin/vendor_perl/mimeopen "$(git ls-files | tmenu -l 10 -p )"'
+alias chat=profanity
+#delphix
+alias js-test-all="ant test -Dtest.browsers=Chrome,Firefox,Safari,PhantomJS | grep 'Running all tests\|Safari\|PhantomJS\|Chrome\|Firefox' | sed 's/     \[echo\] Running all tests: //g' | sed 's/  \[exec\]//g'"
+git-root() {
+    cd $(git root)
+}
+build-gui() {
+    pwd=$(pwd)
+    git-root
+    cd appliance
+    ant createVersion
+    cd client/gui
+    ant all
+    cd $pwd
+}
+debug-gui() {
+    pwd=$(pwd)
+    git-root
+    cd appliance/client/gui
+    grunt
+    cd $pwd
+}
+build-app() {
+    export JAVA_HOME=/usr/lib/jvm/java-7-jdk
+    pwd=$(pwd)
+    git-root
+    cd appliance
+    ant dev
+    cd $pwd
+}
+calw() {
+gcalcli agenda --calendar peter.vilim@delphix.com --calendar "Eng Status"
+}
+alias cps='rsync -p --progress'
+alias o='/usr/bin/vendor_perl/mimeopen'
+alias config='/usr/bin/git --git-dir=$HOME/.myconf/ --work-tree=$HOME'
+config config status.showUntrackedFiles no

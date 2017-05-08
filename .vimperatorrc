@@ -1,0 +1,19 @@
+"3.8.3 (created: 2014/11/09 13:19:01)
+
+source! .vimperatorrc.local
+set gui=nonavigation
+set focuscontent=true
+colorscheme vimpwhite
+
+" vim: set ft=vimperator:
+set scroll=40
+nnoremap k 5k
+nnoremap j 5j
+nnoremap J <C-n>
+nnoremap K <C-p>
+nnoremap d <C-f>
+nnoremap u <C-b>
+nnoremap <C-k> i<C-k>
+nnoremap x d
+nnoremap i gi
+set hintchars=hjklasdfgyuiopqwertnmzxcvb
