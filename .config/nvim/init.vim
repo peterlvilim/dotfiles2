@@ -25,6 +25,7 @@ Plugin 'vim-scripts/indentpython.vim'
 Bundle 'Valloric/YouCompleteMe'
 Plugin 'scrooloose/nerdtree'
 Plugin 'tpope/vim-fugitive'
+Plugin 'pangloss/vim-javascript'
 call vundle#end()            " required
 filetype plugin indent on    " required
 
