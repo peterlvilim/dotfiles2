@@ -1,0 +1,164 @@
+# key binds
+set $mod Mod1
+set $windowkey Mod4
+set $ctrl Ctrl
+# colors
+set $yellow   #b58900
+set $orange   #cb4b16
+set $red #c82829
+set $magenta  #d33682
+set $violet   #6c71c4
+set $blue #1793D1
+set $cyan #2aa198
+set $green    #859900
+set $baseA3 #333333
+set $baseA2 #073642
+set $baseA1 #586e75
+set $baseA0 #657b83
+set $baseB0 #839496
+set $baseB1 #93a1a1
+set $baseB2 #eee8d5
+set $baseB3 #fdf6e3
+set $custom #001b26
+
+# window and bar font
+font -Misc-Fixed-Medium-R-Normal--20-200-75-75-C-100-ISO10646-1
+
+# start a terminal
+bindsym $mod+Return exec ~/.i3/shell.sh
+
+# kill focused window or container
+bindsym $mod+Shift+q kill
+
+# default layout
+workspace_layout tabbed
+
+# focus windows
+bindsym $mod+h focus left
+bindsym $mod+j focus down
+bindsym $mod+k focus up
+bindsym $mod+l focus right
+bindsym $mod+a focus parent
+bindsym $mod+ctrl+h focus parent focus left
+bindsym $mod+ctrl+j focus parent focus down
+bindsym $mod+ctrl+k focus parent focus up
+bindsym $mod+ctrl+l focus parent focus right
+force_focus_wrapping yes
+
+# move focused window
+bindsym $mod+Shift+h move left
+bindsym $mod+Shift+j move down
+bindsym $mod+Shift+k move up
+bindsym $mod+Shift+l move right
+bindsym $mod+Shift+space exec --no-startup-id i3-msg move workspace to output right
+
+# split in horizontal orientation
+bindsym $mod+g focus parent split h
+
+# split in vertical orientation
+bindsym $mod+v focus parent split v
+
+# enter fullscreen mode for the focused container
+bindsym $mod+f fullscreen
+
+# change container layout (stacked, tabbed, toggle split)
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
+
+# switch to workspace
+bindsym $mod+1 workspace number 1
+bindsym $mod+2 workspace number 2
+bindsym $mod+3 workspace number 3
+bindsym $mod+7 workspace number 7
+bindsym $mod+8 workspace number 8
+bindsym $mod+9 workspace number 9
+
+# move focused contain1er to workspace
+bindsym $mod+Shift+1 move container to workspace number 1
+bindsym $mod+Shift+2 move container to workspace number 2
+bindsym $mod+Shift+3 move container to workspace number 3
+bindsym $mod+Shift+7 move container to workspace number 7
+bindsym $mod+Shift+8 move container to workspace number 8
+bindsym $mod+Shift+9 move container to workspace number 9
+
+# mouse
+focus_follows_mouse no
+mouse_warping output
+workspace_auto_back_and_forth yes
+
+# i3bar
+bar {
+	status_command i3status -c ~/.i3/.i3status.conf | /home/pvilim/.i3/wrapper.py
+        colors {
+            # solarized
+            background $baseA3
+            statusline $baseB3
+            focused_workspace $red $red $baseA3
+            active_workspace $green $green $baseA3
+            inactive_workspace $blue $blue $baseA3
+        }
+}
+
+# window colors
+client.focused $baseA3 $red $baseA3 $red
+client.unfocused $baseA3 $blue $baseA3 $blue
+client.focused_inactive $baseA3 $green $baseA3 $green
+
+# window borders and layout
+for_window [title=" - Chromium$"] border none
+for_window [title="Spotify Premium - Linux Preview"] border none
+for_window [class="Dwb"] focus child, layout tabbed, focus
+for_window [] layout tabbed
+
+# application launch hotkeys
+bindsym $MOD+SHIFT+g exec --no-startup-id chromium --user-data-dir=/tmp/chromedev --force-device-scale-factor=1.2
+bindsym $MOD+SHIFT+e exec --no-startup-id SWT_GTK3=0 eclipse
+bindsym $MOD+SHIFT+f exec --no-startup-id firefox
+bindsym $MOD+SHIFT+p exec --no-startup-id zathura
+bindsym $MOD+SHIFT+d exec --no-startup-id qutebrowser
+bindsym $MOD+SHIFT+m exec --no-startup-id offlineimap-notify
+bindsym $MOD+SHIFT+s exec --no-startup-id pavucontrol
+bindsym $MOD+SHIFT+z exec ~/.i3/suspend.sh
+bindsym $MOD+SHIFT+x exec i3lock
+bindsym $MOD+SHIFT+w exec chromium --app=http://wunderlist.com
+bindsym $MOD+SHIFT+v exec nmcli c up delphixvpn
+
+# monitors
+workspace 1 output DP-1
+workspace 2 output DP-1
+workspace 3 output DP-1
+workspace 7 output eDP-1
+workspace 8 output eDP-1
+workspace 9 output eDP-1
+bindsym $alt+q exec dohotplug
+bindsym $windowkey+q exec dohotplug
+
+# menus
+bindsym $windowkey+y exec gitmenu
+bindsym $windowkey+p exec passmenu
+bindsym $windowkey+o exec openmenu
+bindsym $windowkey+i exec windowmenu
+bindsym $windowkey+u exec powermenu
+bindsym $windowkey+r exec runmenu
+bindsym $windowkey+t exec twitchmenu
+bindsym $windowkey+n exec netctlmenu
+bindsym $windowkey+v exec videomenu
+bindsym $windowkey+w exec workspacerename
+bindsym $windowkey+space exec touchpadtoggle
+
+# sound and music controls
+bindsym $MOD+Up exec --no-startup-id ponymix increase 5
+bindsym $MOD+Down exec --no-startup-id ponymix decrease 5
+bindsym $MOD+Left exec --no-startup-id ponymix toggle
+bindsym $MOD+Right exec --no-startup-id ponymix toggle
+bindsym $mod+SHIFT+Left exec --no-startup-id mpc prev
+bindsym $mod+SHIFT+Up exec --no-startup-id mpc toggle
+bindsym $mod+SHIFT+Down exec --no-startup-id mpc toggle
+bindsym $mod+SHIFT+Right exec --no-startup-id mpc next
+
+#light
+bindsym $windowkey+Up exec /home/pvilim/.i3/lightup
+bindsym $windowkey+Down exec /home/pvilim/.i3/lightdown
+# startup script
+exec ~/.i3/i3start.sh
