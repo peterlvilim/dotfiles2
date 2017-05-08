@@ -1,0 +1,4 @@
+#!/bin/sh
+
+profile="$(netctl list | cut -c 3- | dmenu-dark -p network "$@")"
+[ "$profile" ] && sudo netctl switch-to "$profile" &

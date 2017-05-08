@@ -1,0 +1,1 @@
+urxvt -cd `locate -d $HOME/.updatedb .git | grep .git$ | sed 's/.git//g' | dmenu-dark -p repository -l 10`

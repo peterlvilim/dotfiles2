@@ -1,0 +1,8 @@
+#!/bin/sh
+COMMANDS="suspend\nreboot\npoweroff\nlock\nlogout\n"
+
+command=$(printf $COMMANDS | \
+    dmenu-dark -p "power")
+[ "$command" = "" ] && exit 1
+command=$(printf $command | sed 's/^ *//')
+$HOME/.i3/${command}.sh && exit 0

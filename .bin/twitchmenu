@@ -1,0 +1,209 @@
+#!/usr/bin/env bash
+# ~/.local/bin/ditch
+# Create a dmenu using the twitch team and stream APIs.
+
+# Requires: jshon, dmenu-imlib-pango (for -w), livestreamer
+# Optional: notify-send
+
+# Files
+# ~/.config/ditch/teams      List of twitch teams.
+# ~/.config/ditch/streamers  List of individual streamers.
+
+readonly progn=ditch
+readonly data_dir="${XDG_CONFIG_HOME:-$HOME/.config}/$progn"
+
+# Used to store downloaded json.
+readonly TMPDIR="${TMPDIR:-/tmp}"
+
+# Options passed to dmenu, the `-p` prompt is passed later, remove `-w` if you
+# use plain old dmenu.
+dmenu_opts=(
+    -fn 'Dina Bold 8' -w -i -l 40
+    -nf '#a7a7a7' -nb '#1e1e1e'
+    -sf '#9b859d' -sb '#262626'
+)
+
+puts() { # string string -> stdout
+    local fmt="$1"; shift
+
+    printf -- "$fmt\n" "$@"
+}
+
+err() { # string string -> stderr
+    local msg
+
+    if [[ ! -t 0 ]] && hash notify-send &> /dev/null; then
+        msg="$(puts "$@")"
+        notify-send -u critical -- "$progn" "$msg"
+    else
+        puts "$progn: $@" >&2 
+    fi
+}
+
+get_user_data() { # disk -> stdout
+    local team list chunk nelem tmp
+
+    if [[ -s "$data_dir"/teams ]]; then
+        while read -r team; do
+            puts '%s' "$team"
+        done < "$data_dir"/teams
+    fi
+
+    if [[ -s "$data_dir"/streamers ]]; then
+        mapfile -t list < "$data_dir"/streamers
+
+        # Twitch lets us use a maximum of 100 streamers per query.
+        chunk=100
+        nelem=${#list[@]}
+
+        if ((nelem < chunk)); then
+            printf -- '%s,' "${list[@]}"
+            puts '&limit=%d' $nelem
+        else
+            while ((${#list[@]})); do
+                # Assuming chunks of 2, the following occurs on [1 2 3 4 5]:
+                # 1st loop: [{ 1 2 } 3 4 5]  => 1,2,
+                # 2nd loop: [{ 3 4 } 5]      => 3,4,
+                # 3rd loop: [{ 5 }]          => 5,
+                printf -- '%s,' "${list[@]::$chunk}"
+
+                tmp=("${list[@]::$chunk}")
+                puts'&limit=%d' ${#tmp[@]}
+
+                # 1st loop: [ 1 2 { 3 4 5 }] => list = [3 4 5]
+                # 2nd loop: [ 3 4 { 5 }]     => list = [5]
+                # 3rd loop: [ 5 { }]         => done
+                list=("${list[@]:$chunk}")
+            done
+        fi
+    fi
+}
+
+# Download all the json chunks to individual files, each file will be read
+# sequentially later but this allows me to (fork) background this function.
+get_json() { # string -> stdout 
+    local s="$1"
+    local stream data
+
+    # We assume streams always have `&limit=` appended.
+    if [[ "$s" =~ \&limit= ]]; then
+        data="$(mktemp -t "$progn"-channels-XXX.json)"
+        curl -sLG "https://api.twitch.tv/kraken/streams?channel=$s" > "$data"
+    else
+        data="$(mktemp -t "$progn"-teams-XXX.json)"
+        curl -sLG "http://api.twitch.tv/api/team/$s/live_channels.json" > "$data"
+    fi
+}
+
+# Parsed json is printed in series of three lines, the first is the username,
+# then the url to their stream and finally the title.
+parse_json() { # disk -> stdout
+    local i json args
+
+    # Fire off all the curl calls as soon as possible.
+    for i in "${twitch_list[@]}"; do
+        get_json "$i" &
+    done
+
+    # Wait for all the get_json jobs to finish before continuing.
+    wait
+
+    for i in "$TMPDIR"/*.json; do
+        # Around 50-70% of time is spent here.
+        if [[ "$i" == *$progn-channels-* ]]; then
+            local args=(-Q -e streams -a -e channel -e name -upe url -upe status)
+            jshon "${args[@]}" < "$i"
+        fi
+        
+        if [[ "$i" == *$progn-teams-* ]]; then
+            local args=(-Q -e channels -a -e channel -e name -upe link -upe title)
+            jshon "${args[@]}" < "$i"
+        fi
+
+        # Make sure we remove the json once we're done so it doesn't interfere
+        # with proceeding runs and doesn't clutter up `$TMPDIR`.
+        rm -rf -- "$i"
+    done
+}
+
+get_user_picks() { # globals(streams, menu, dmenu_opts) -> command -> stdout
+    local fmt max i
+
+    # Display the number of current streams in dmenu's prompt.
+    dmenu_opts+=(-p "Stream ${#stream[@]}")
+
+    # Use awk to pretty-print the user and title in 2 columns.
+    # Calculate the required spacing by finding the longest streamer name.
+    for i in "${!stream[@]}"; do
+        ((${#i} > max)) && max=${#i}
+    done
+
+    # XXX This doesn't work so well for non-proportional fonts.
+    fmt='{ a = $1; $1 = ""; printf "%-'$max's %s\n", a, $0 }'
+    puts '%s' "${!menu[@]}" | awk "$fmt" | dmenu-dark -p stream
+}
+
+play_stream() { # string string -> either(command, stderr)
+    local url="$1"
+    local title="$2"
+    local err
+
+    lstreamer_opts=(
+        --player "mpv '--no-osc'"
+        --quiet
+        "$url"
+        "source"
+    )
+    if ! err="$(livestreamer "${lstreamer_opts[@]}")"; then
+        err '%s' "$err"
+    fi
+}
+
+typeset -A stream menu
+
+if ! mkdir -p "$data_dir"; then
+    err '%s: Error in data directory creation.' "$data_dir"
+    exit 1
+fi
+
+mapfile -t twitch_list < <(get_user_data)
+
+if [[ -z "${twitch_list[@]}" ]]; then
+    err 'No configuration data found.'
+    exit 1
+fi
+
+while {
+    read -r name
+    read -r url
+    read -r title
+} do
+    # Manually de-json the title.
+    title="${title%\"*}" title="${title#\"}" title="${title//\\/}"
+
+    # The `menu` is what we will use for displaying via dmenu, we will later
+    # extract the first word from the result which is `$name` used as the key
+    # in `streams` to access the `$url`.
+    menu["$name $title"]=1 # Store only unique results using a "set".
+    stream["$name"]="$url"
+done < <(parse_json)
+
+results="$(get_user_picks)"
+
+# Exit if nothing was selected.
+[[ -z "$results" ]] && exit
+
+while read -r streamer title; do
+    [[ -z "$title" ]] && title="$streamer"
+
+    # Check if the selection actually matches a stream.
+    if [[ -n "${stream[$streamer]}" ]]; then
+        url="${stream[$streamer]}"
+    else
+        err '%s: Cannot find associated stream.' "$streamer"
+        exit 1
+    fi
+
+    # Fire off all in the background, this will still warn on failure.
+    play_stream "$url" "$title" &
+done <<< "$results"

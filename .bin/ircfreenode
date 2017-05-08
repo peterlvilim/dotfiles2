@@ -1,0 +1,4 @@
+pkill -9 -f oxygen.vil.im
+ssh -f pvilim@oxygen.vil.im -L 6667:oxygen.vil.im:6667 -N
+irssi -c localhost -w x --config=/home/pvilim/.irssi/configfreenode
+pkill -9 -f oxygen.vil.im

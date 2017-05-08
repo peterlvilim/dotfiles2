@@ -1,0 +1,1 @@
+nzbget -s --option Server1.password=`pass neuromancer23@astraweb.net` --option Server2.password=`pass UB013379@reader.usenetbucket.com`
