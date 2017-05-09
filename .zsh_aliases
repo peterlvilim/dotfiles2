@@ -11,7 +11,7 @@ alias k="pkill -9 -f"
 alias p="pass -c"
 alias crontab-e="$EDITOR ~/.crontab && crontab ~/.crontab"
 ago() {
-ag "$@" && /usr/bin/vendor_perl/mimeopen `ag -l --nobreak "$@" | tmenu -l 10 -p `
+ag "$@" && $EDITOR `ag -l --nobreak "$@" | tmenu -l 10 -p `
 }
 alias l="ls -F"
 alias edit='/usr/bin/vendor_perl/mimeopen "$(git ls-files | tmenu -l 10 -p )"'
