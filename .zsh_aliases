@@ -52,3 +52,4 @@ alias cps='rsync -p --progress'
 alias o='/usr/bin/vendor_perl/mimeopen'
 alias config='/usr/bin/git --git-dir=$HOME/.myconf/ --work-tree=$HOME'
 config config status.showUntrackedFiles no
+alias ec="/home/pvilim/.enchanted-container/vmsetup/bootstrap/ec"
