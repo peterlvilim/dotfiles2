@@ -22,11 +22,24 @@ Plugin 'kien/ctrlp.vim'
 Plugin 'tpope/vim-unimpaired'
 Plugin 'airblade/vim-gitgutter'
 Plugin 'vim-scripts/indentpython.vim'
-Bundle 'Valloric/YouCompleteMe'
+"Bundle 'Valloric/YouCompleteMe'
 Plugin 'scrooloose/nerdtree'
 Plugin 'tpope/vim-fugitive'
 Plugin 'pangloss/vim-javascript'
 Plugin 'fatih/vim-go'
+
+" from language client
+Plugin 'autozimu/LanguageClient-neovim'
+
+" (Optional) Multi-entry selection UI.
+Plugin 'Shougo/denite.nvim'
+
+" (Optional) Completion integration with deoplete.
+Plugin 'Shougo/deoplete.nvim'
+
+" (Optional) Showing function signature and inline doc.
+Plugin 'Shougo/echodoc.vim'
+
 call vundle#end()            " required
 filetype plugin indent on    " required
 
@@ -75,10 +88,9 @@ nnoremap k gk| " move by visual line
 nnoremap K <C-B> " page up
 nnoremap J <C-F> " page down
 let mapleader="," " map leader from \ to ,
-nnoremap <C-h> <C-w>h| " move window left
+nnoremap <C-h> :split<CR>
 nnoremap <C-j> <C-w>j| " move window down
 nnoremap <C-k> <C-w>k| " move window up
-nnoremap <C-l> <C-w>l| " move window right
 nmap <Space> i_<Esc>r| " use space to insert one char
 set scrolloff=2 " keep two lines on screen when scrolling
 nnoremap <tab> %
@@ -143,6 +155,7 @@ let g:pymode_lint_on_write = 1 " enable lint on write (run manually)
 let g:pymode_doc_bind = '' " disable doc key since it is used for page up
 let g:pymode_lint_cwindow = 0 " disable open window for errors
 
+let g:ctrl_p_cache_dir = $HOME . '/.cache/ctrlp'
 if executable('ag')
   " Use Ag over Grep
   set grepprg=ag\ --nogroup\ --nocolor
@@ -159,10 +172,11 @@ so ~/.config/nvim/autoload/WatchForChanges.vim
 " easytags
 let g:easytags_suppress_report = 1
 
-nnoremap <C-l> :redraw!<CR>| " force redraw
-  let g:ycm_filetype_specific_completion_to_disable = {
-          \ 'gitcommit': 1,
-          \}
+
+"nnoremap <C-l> :redraw!<CR>| " force redraw
+"  let g:ycm_filetype_specific_completion_to_disable = {
+"          \ 'gitcommit': 1,
+"          \}
 
 " gvim
 :set guioptions-=m  "remove menu bar
@@ -171,6 +185,18 @@ nnoremap <C-l> :redraw!<CR>| " force redraw
 :set guioptions-=L  "remove left-hand scroll bar
 
 "python start
-let g:ycm_server_python_interpreter = '/usr/bin/python2'
-let g:ycm_autoclose_preview_window_after_completion=1
-map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
+"let g:ycm_server_python_interpreter = '/usr/bin/python2'
+"let g:ycm_autoclose_preview_window_after_completion=1
+"map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
+"
+let g:LanguageClient_serverCommands = {
+            \ 'python': ['pyls']
+            \ }
+
+" Automatically start language servers.
+let g:LanguageClient_autoStart = 1
+let g:deoplete#enable_at_startup = 1
+
+nnoremap <silent> H :call LanguageClient_textDocument_hover()<CR>
+nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
+nnoremap <silent> <F2> :call LanguageClient_textDocument_rename()<CR>

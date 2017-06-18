@@ -145,6 +145,7 @@ bindsym $windowkey+t exec twitchmenu
 bindsym $windowkey+n exec netctlmenu
 bindsym $windowkey+v exec videomenu
 bindsym $windowkey+w exec workspacerename
+bindsym $windowkey+m exec monitor_menu
 bindsym $windowkey+space exec touchpadtoggle
 
 # sound and music controls

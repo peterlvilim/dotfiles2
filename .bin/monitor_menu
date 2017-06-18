@@ -1,0 +1,8 @@
+#!/bin/sh
+COMMANDS="external\nlaptop\n"
+
+command=$(printf $COMMANDS | \
+    dmenu-dark -p "monitor layout")
+[ "$command" = "" ] && exit 1
+command=$(printf $command | sed 's/^ *//')
+$HOME/.i3/${command}.sh && exit 0
