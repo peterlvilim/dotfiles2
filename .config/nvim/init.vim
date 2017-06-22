@@ -27,6 +27,8 @@ Plugin 'scrooloose/nerdtree'
 Plugin 'tpope/vim-fugitive'
 Plugin 'pangloss/vim-javascript'
 Plugin 'fatih/vim-go'
+Plugin 'w0rp/ale'
+Plugin 'mileszs/ack.vim'
 
 " from language client
 Plugin 'autozimu/LanguageClient-neovim'
@@ -55,7 +57,6 @@ let g:solarized_italic    =   1 " enable italic fonts
 let g:solarized_contrast  =   "normal" " default contrast for text
 let g:solarized_visibility=   "normal" " dfault visibility for text
 syntax on " enable syntax highlighting
-
 
 set title " display doc name in terminal title
 set showcmd             " show command in bottom bar
@@ -157,9 +158,7 @@ let g:pymode_lint_cwindow = 0 " disable open window for errors
 
 let g:ctrl_p_cache_dir = $HOME . '/.cache/ctrlp'
 if executable('ag')
-  " Use Ag over Grep
-  set grepprg=ag\ --nogroup\ --nocolor
-
+  let g:ackprg = 'ag --vimgrep'
   " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
   let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
 endif
@@ -200,3 +199,6 @@ let g:deoplete#enable_at_startup = 1
 nnoremap <silent> H :call LanguageClient_textDocument_hover()<CR>
 nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
 nnoremap <silent> <F2> :call LanguageClient_textDocument_rename()<CR>
+
+cnoreabbrev Ack Ack!
+nnoremap <Leader>a :Ack!<Space>

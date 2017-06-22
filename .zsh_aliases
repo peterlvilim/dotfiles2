@@ -15,6 +15,9 @@ ag "$@" && $EDITOR `ag -l --nobreak "$@" | tmenu -l 10 -p `
 }
 alias l="ls -F"
 alias edit='$EDITOR "$(git ls-files | tmenu -l 10 -p )"'
+nav() {
+cd "$(g ls-files | sed 's/\/[^/]*$//' | tmenu -l 10 -p )"
+}
 alias chat=profanity
 #delphix
 alias js-test-all="ant test -Dtest.browsers=Chrome,Firefox,Safari,PhantomJS | grep 'Running all tests\|Safari\|PhantomJS\|Chrome\|Firefox' | sed 's/     \[echo\] Running all tests: //g' | sed 's/  \[exec\]//g'"
