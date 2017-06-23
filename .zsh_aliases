@@ -11,12 +11,17 @@ alias k="pkill -9 -f"
 alias p="pass -c"
 alias crontab-e="$EDITOR ~/.crontab && crontab ~/.crontab"
 ago() {
-ag "$@" && $EDITOR `ag -l --nobreak "$@" | fzf --height 20%`
+ag "$@" &&
+file=$(ag -l --nobreak "$@" | fzf --height 20%)
+$EDITOR $file
 }
-alias l="ls -F"
-alias edit='$EDITOR "$(git ls-files | fzf --height 20%)"'
+edit() {
+    file=$(git ls-files | fzf --height 20%) &&
+    $EDITOR $file
+}
 nav() {
-cd "$(g ls-files | sed 's/\/[^/]*$//' | fzf --height 20%)"
+folder=$(g ls-files | sed 's/\/[^/]*$//' | fzf --height 20%) &&
+cd $folder
 }
 alias chat=profanity
 #delphix
