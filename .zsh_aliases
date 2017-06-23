@@ -11,10 +11,10 @@ alias k="pkill -9 -f"
 alias p="pass -c"
 alias crontab-e="$EDITOR ~/.crontab && crontab ~/.crontab"
 ago() {
-ag "$@" && $EDITOR `ag -l --nobreak "$@" | tmenu -l 10 -p `
+ag "$@" && $EDITOR `ag -l --nobreak "$@" | fzf --height 20%`
 }
 alias l="ls -F"
-alias edit='$EDITOR "$(git ls-files | tmenu -l 10 -p )"'
+alias edit='$EDITOR "$(git ls-files | fzf --height 20%)"'
 nav() {
 cd "$(g ls-files | sed 's/\/[^/]*$//' | tmenu -l 10 -p )"
 }
@@ -56,3 +56,6 @@ alias o='/usr/bin/vendor_perl/mimeopen'
 alias config='/usr/bin/git --git-dir=$HOME/.myconf/ --work-tree=$HOME'
 config config status.showUntrackedFiles no
 alias ec="/home/pvilim/.enchanted-container/vmsetup/bootstrap/ec"
+groot() {
+    cd $(git rev-parse --show-toplevel)
+}

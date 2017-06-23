@@ -15,10 +15,12 @@ call vundle#begin()
 call vundle#rc(s:editor_root . '/bundle')
 Plugin 'VundleVim/Vundle.vim'
 Plugin 'edkolev/promptline.vim'
-Plugin 'rking/ag.vim'
+"Plugin 'rking/ag.vim'
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
-Plugin 'kien/ctrlp.vim'
+"Plugin 'kien/ctrlp.vim'
+"Plugin 'nixprime/cpsm'
+"Plugin 'JazzCore/ctrlp-cmatcher'
 Plugin 'tpope/vim-unimpaired'
 Plugin 'airblade/vim-gitgutter'
 Plugin 'vim-scripts/indentpython.vim'
@@ -28,7 +30,11 @@ Plugin 'tpope/vim-fugitive'
 Plugin 'pangloss/vim-javascript'
 Plugin 'fatih/vim-go'
 Plugin 'w0rp/ale'
-Plugin 'mileszs/ack.vim'
+"Plugin 'mileszs/ack.vim'
+Plugin 'khadiwala/wundervim'
+Plugin 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plugin 'junegunn/fzf.vim'
+
 
 " from language client
 Plugin 'autozimu/LanguageClient-neovim'
@@ -105,10 +111,16 @@ nnoremap [l :lprev<CR><CR>| " go to previous
 nnoremap ]l :lnext<CR><CR>| " go to previous
 
 " Revert Git hunk
-nnoremap <leader>g :GitGutterRevertHunk<CR>
+nnoremap <leader>g :GitGutterUndoHunk<CR>
+nnoremap <leader>] :GitGutterNextHunk<CR>
+nnoremap <leader>[ :GitGutterPrevHunk<CR>
 
 " Search
 nnoremap <leader>a :Ag 
+nnoremap <leader>A :Ag! 
+nnoremap <leader>r :Rg 
+nnoremap <leader>R :Rg! 
+nnoremap <C-p> :GFiles<CR>
 
 set viminfo='10,\"100,:20,%,n~/.viminfo " remember where in a file we were when we closed
 
@@ -156,12 +168,12 @@ let g:pymode_lint_on_write = 1 " enable lint on write (run manually)
 let g:pymode_doc_bind = '' " disable doc key since it is used for page up
 let g:pymode_lint_cwindow = 0 " disable open window for errors
 
-let g:ctrl_p_cache_dir = $HOME . '/.cache/ctrlp'
-if executable('ag')
-  let g:ackprg = 'ag --vimgrep'
-  " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
-  let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
-endif
+"let g:ctrl_p_cache_dir = $HOME . '/.cache/ctrlp'
+"if executable('ag')
+"  let g:ackprg = 'ag --vimgrep'
+"  " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
+"  let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+"endif
 set autochdir " Switch our directory to current open file
 
 so ~/.config/nvim/autoload/WatchForChanges.vim
@@ -200,5 +212,24 @@ nnoremap <silent> H :call LanguageClient_textDocument_hover()<CR>
 nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
 nnoremap <silent> <F2> :call LanguageClient_textDocument_rename()<CR>
 
-cnoreabbrev Ack Ack!
-nnoremap <Leader>a :Ack!<Space>
+"cnoreabbrev Ack Ack!
+"nnoremap <Leader>a :Ack!<Space>
+"let g:ctrlp_match_func = {'match' : 'matcher#cmatch' }
+command! -bang -nargs=* Ag
+ \ call fzf#vim#ag(<q-args>,
+ \                 <bang>0 ? fzf#vim#with_preview('up:60%')
+ \                         : fzf#vim#with_preview('right:50%:hidden', '?'),
+ \                 <bang>0)
+
+" Similarly, we can apply it to fzf#vim#grep. To use ripgrep instead of ag:
+command! -bang -nargs=* Rg
+  \ call fzf#vim#grep(
+  \   'rg --column --line-number --no-heading --color=always '.shellescape(<q-args>), 1,
+  \   <bang>0 ? fzf#vim#with_preview('up:60%')
+  \           : fzf#vim#with_preview('right:50%:hidden', '?'),
+  \   <bang>0)
+
+" [[B]Commits] Customize the options used by 'git log':
+let g:fzf_commits_log_options = '--color=always --format="%C(auto)%h%d %an %s %C(black)%C(bold)%cr"'
+nnoremap <C-g> :Commits<CR>
+nnoremap <silent> gh /[0-9a-f]\{5,40}<CR>
