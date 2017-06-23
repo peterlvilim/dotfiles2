@@ -16,7 +16,7 @@ ag "$@" && $EDITOR `ag -l --nobreak "$@" | fzf --height 20%`
 alias l="ls -F"
 alias edit='$EDITOR "$(git ls-files | fzf --height 20%)"'
 nav() {
-cd "$(g ls-files | sed 's/\/[^/]*$//' | tmenu -l 10 -p )"
+cd "$(g ls-files | sed 's/\/[^/]*$//' | fzf --height 20%)"
 }
 alias chat=profanity
 #delphix
