@@ -10,6 +10,7 @@ alias m="mutt"
 alias k="pkill -9 -f"
 alias p="pass -c"
 alias crontab-e="$EDITOR ~/.crontab && crontab ~/.crontab"
+alias l="ls -F"
 ago() {
 ag "$@" &&
 file=$(ag -l --nobreak "$@" | fzf --height 20%)
