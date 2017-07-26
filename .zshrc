@@ -88,3 +88,4 @@ export JAVA_HOME=/usr/lib/jvm/default-runtime
 export TZ=/etc/localtime
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+#nvim -c Term

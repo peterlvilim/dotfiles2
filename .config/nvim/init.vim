@@ -34,16 +34,19 @@ Plugin 'w0rp/ale'
 Plugin 'khadiwala/wundervim'
 Plugin 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plugin 'junegunn/fzf.vim'
+Plugin 'davidhalter/jedi-vim'
 
 
 " from language client
-Plugin 'autozimu/LanguageClient-neovim'
+"Plugin 'autozimu/LanguageClient-neovim'
 
 " (Optional) Multi-entry selection UI.
 Plugin 'Shougo/denite.nvim'
 
 " (Optional) Completion integration with deoplete.
 Plugin 'Shougo/deoplete.nvim'
+"Plugin 'roxma/nvim-completion-manager'
+Plugin 'zchee/deoplete-jedi'
 
 " (Optional) Showing function signature and inline doc.
 Plugin 'Shougo/echodoc.vim'
@@ -200,17 +203,17 @@ let g:easytags_suppress_report = 1
 "let g:ycm_autoclose_preview_window_after_completion=1
 "map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
 "
-let g:LanguageClient_serverCommands = {
-            \ 'python': ['pyls']
-            \ }
-
+"let g:LanguageClient_serverCommands = {
+"            \ 'python': ['pyls']
+"            \ }
+"
 " Automatically start language servers.
-let g:LanguageClient_autoStart = 1
+"let g:LanguageClient_autoStart = 0
 let g:deoplete#enable_at_startup = 1
 
-nnoremap <silent> H :call LanguageClient_textDocument_hover()<CR>
-nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
-nnoremap <silent> <F2> :call LanguageClient_textDocument_rename()<CR>
+"nnoremap <silent> H :call LanguageClient_textDocument_hover()<CR>
+"nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
+"nnoremap <silent> <F2> :call LanguageClient_textDocument_rename()<CR>
 
 "cnoreabbrev Ack Ack!
 "nnoremap <Leader>a :Ack!<Space>
@@ -232,4 +235,24 @@ command! -bang -nargs=* Rg
 " [[B]Commits] Customize the options used by 'git log':
 let g:fzf_commits_log_options = '--color=always --format="%C(auto)%h%d %an %s %C(black)%C(bold)%cr"'
 nnoremap <C-g> :Commits<CR>
-nnoremap <silent> gh /[0-9a-f]\{5,40}<CR>
+"nnoremap <silent> gh /[0-9a-f]\{5,40}<CR>
+
+" terminal
+tnoremap <C-o> <C-\><C-n>
+
+function! Term()
+    set laststatus=0
+    set statusline=%{b:term_title}
+    set titlestring=%{b:term_title}
+    term
+endfunction
+command! -register Term call Term()
+" use deoplete
+let g:jedi#popup_on_dot = 0
+let g:jedi#goto_command = "<leader>d"
+let g:jedi#goto_assignments_command = "<leader>g"
+let g:jedi#goto_definitions_command = ""
+let g:jedi#documentation_command = "H"
+let g:jedi#usages_command = "<leader>n"
+let g:jedi#completions_command = "<C-Space>"
+let g:jedi#rename_command = "<leader>r"

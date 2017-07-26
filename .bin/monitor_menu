@@ -1,5 +1,5 @@
 #!/bin/sh
-COMMANDS="external\nlaptop\n"
+COMMANDS="external\nlaptop\ncenter\n"
 
 command=$(printf $COMMANDS | \
     dmenu-dark -p "monitor layout")

@@ -25,7 +25,8 @@ set $custom #001b26
 font -Misc-Fixed-Medium-R-Normal--20-200-75-75-C-100-ISO10646-1
 
 # start a terminal
-bindsym $mod+Return exec ~/.i3/shell.sh
+#bindsym $mod+Return exec urxvt -e nvim -c Term
+bindsym $mod+Return exec urxvt
 
 # kill focused window or container
 bindsym $mod+Shift+q kill
