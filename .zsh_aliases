@@ -66,3 +66,4 @@ groot() {
     cd $(git rev-parse --show-toplevel)
 }
 alias server='cd /mnt/repos/server/'
+alias gs='echo make this'
