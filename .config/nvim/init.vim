@@ -35,10 +35,11 @@ Plugin 'khadiwala/wundervim'
 Plugin 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plugin 'junegunn/fzf.vim'
 Plugin 'davidhalter/jedi-vim'
+Plugin 'rust-lang/rust.vim'
 
 
 " from language client
-"Plugin 'autozimu/LanguageClient-neovim'
+"Plugin 'autozimu/LanguageClient-neovim', { 'do': ':UpdateRemotePlugins' }
 
 " (Optional) Multi-entry selection UI.
 Plugin 'Shougo/denite.nvim'
@@ -47,6 +48,7 @@ Plugin 'Shougo/denite.nvim'
 Plugin 'Shougo/deoplete.nvim'
 "Plugin 'roxma/nvim-completion-manager'
 Plugin 'zchee/deoplete-jedi'
+Plugin 'sebastianmarkow/deoplete-rust'
 
 " (Optional) Showing function signature and inline doc.
 Plugin 'Shougo/echodoc.vim'
@@ -256,3 +258,6 @@ let g:jedi#documentation_command = "H"
 let g:jedi#usages_command = "<leader>n"
 let g:jedi#completions_command = "<C-Space>"
 let g:jedi#rename_command = "<leader>r"
+
+nmap <buffer> gd <plug>DeopleteRustGoToDefinitionDefault
+nmap <buffer> K  <plug>DeopleteRustShowDocumentation
