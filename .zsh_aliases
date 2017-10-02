@@ -59,8 +59,8 @@ gcalcli agenda --calendar peter.vilim@delphix.com --calendar "Eng Status"
 }
 alias cps='rsync -p --progress'
 alias o='/usr/bin/vendor_perl/mimeopen'
-alias config='/usr/bin/git --git-dir=$HOME/.myconf/ --work-tree=$HOME'
-config config status.showUntrackedFiles no
+alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
+#config config status.showUntrackedFiles no
 alias ec="/home/pvilim/.enchanted-container/vmsetup/bootstrap/ec"
 groot() {
     cd $(git rev-parse --show-toplevel)
